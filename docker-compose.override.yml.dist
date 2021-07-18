@@ -1,0 +1,11 @@
+version: "3"
+services:
+  go:
+    ports:
+      - "8100:8100"
+  prometheus:
+    ports:
+      - "9090:9090"
+  grafana:
+    ports:
+      - "3000:3000"
