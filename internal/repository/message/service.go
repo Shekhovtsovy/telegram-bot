@@ -1,10 +1,13 @@
 package message
 
-import "database/sql"
+import (
+	"database/sql"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+)
 
 // Repository is an interface which provides methods for message repository work
 type Repository interface {
-	InsertMessage() error
+	InsertMessage(message *tgbotapi.Message) error
 }
 
 type repository struct {
@@ -12,8 +15,7 @@ type repository struct {
 }
 
 // Insert message to database
-func (r *repository) InsertMessage() error {
-	println("Insert Message To Database")
+func (r *repository) InsertMessage(message *tgbotapi.Message) error {
 	return nil
 }
 

@@ -1,12 +1,17 @@
-package message
+package user
+
+import (
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+)
 
 // Service is an interface which provides methods for user service work
 type Service interface {
-	SaveUser() error
+	SaveUserIfNew(user *tgbotapi.User) error
 }
 
 type repository interface {
-	InsertUser() error
+	InsertUser(user *tgbotapi.User) error
+	SelectUser(id int) (tgbotapi.User, error)
 }
 
 type service struct {
@@ -14,9 +19,12 @@ type service struct {
 }
 
 // Save user
-func (s *service) SaveUser() error {
-	if err := s.repository.InsertUser(); err != nil {
-		return err
+func (s *service) SaveUserIfNew(user *tgbotapi.User) error {
+	_, err := s.repository.SelectUser(user.ID)
+	if err != nil {
+		if err := s.repository.InsertUser(user); err != nil {
+			return err
+		}
 	}
 	return nil
 }

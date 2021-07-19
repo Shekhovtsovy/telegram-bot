@@ -2,13 +2,13 @@ package metrics
 
 import "github.com/prometheus/client_golang/prometheus"
 
-type telegramStat struct {
-	receivedMessages prometheus.Counter
-}
-
 // TelegramStat is an interface which provides methods for stat working
 type TelegramStat interface {
 	IncReceivedMessages()
+}
+
+type telegramStat struct {
+	receivedMessages prometheus.Counter
 }
 
 // Increment counter of received messages

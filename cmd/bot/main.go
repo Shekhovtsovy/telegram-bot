@@ -21,7 +21,7 @@ func main() {
 	apiServer := api2.NewServer()
 	db, err := postgres.GetDb(cfg)
 	if err != nil {
-		panic("can`t connect to Database")
+		panic("can`t connect to database")
 	}
 	messageRepository := mRep.NewRepository(db)
 	messageService := mSer.NewService(messageRepository)
@@ -34,7 +34,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		if err := apiServer.Start(fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)); err != nil && err != http.ErrServerClosed {
-			panic(err)
+			panic("can`t start web server")
 		}
 	}()
 	go func() {

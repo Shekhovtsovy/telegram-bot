@@ -6,17 +6,17 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-type messageService interface {
-	SaveMessage() error
-}
-
-type userService interface {
-	SaveUser() error
-}
-
 // Bot is an interface which provides methods for bot working
 type Bot interface {
 	Listen()
+}
+
+type messageService interface {
+	SaveMessage(message *tgbotapi.Message) error
+}
+
+type userService interface {
+	SaveUserIfNew(user *tgbotapi.User) error
 }
 
 type bot struct {
@@ -37,9 +37,9 @@ func (b *bot) Listen() {
 			continue
 		}
 		b.stat.IncReceivedMessages()
-		if err := b.messageService.SaveMessage(); err != nil {
+		if err := b.messageService.SaveMessage(update.Message); err != nil {
 		}
-		if err := b.userService.SaveUser(); err != nil {
+		if err := b.userService.SaveUserIfNew(update.Message.From); err != nil {
 		}
 	}
 }
