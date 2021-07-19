@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	Host string `envconfig:"APP_HOST" default:"localhost"`
-	Port string `envconfig:"APP_PORT" default:"8100"`
+	Host  string `envconfig:"APP_HOST" default:"localhost"`
+	Port  string `envconfig:"APP_PORT" default:"8100"`
+	IsLog bool   `envconfig:"APP_LOG" default:"false"`
 	Telegram
 	Db
 }

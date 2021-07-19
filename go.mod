@@ -11,6 +11,7 @@ require (
 	github.com/labstack/echo-contrib v0.11.0
 	github.com/labstack/echo/v4 v4.4.0
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/lib/pq v1.10.2 // indirect
 	github.com/prometheus/client_golang v1.11.0
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 )
