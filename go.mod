@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
+	github.com/golang-migrate/migrate/v4 v4.14.1 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/labstack/echo-contrib v0.11.0

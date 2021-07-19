@@ -10,6 +10,7 @@ type Config struct {
 	Host string `envconfig:"APP_HOST" default:"localhost"`
 	Port string `envconfig:"APP_PORT" default:"8100"`
 	Telegram
+	Db
 }
 
 var (

@@ -3,6 +3,12 @@ services:
   go:
     ports:
       - "8100:8100"
+  postgres:
+    ports:
+      - "5432:5432"
+  pgadmin:
+    ports:
+       - "8000:80"
   prometheus:
     ports:
       - "9090:9090"

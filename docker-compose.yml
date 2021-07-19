@@ -5,14 +5,31 @@ services:
     build:
       context: build/docker/go
     image: golang:1.16-alpine
-    container_name: oa-go
+    container_name: bot-go
     volumes:
       - "./:/go/src"
     networks:
       - bot
+  postgres:
+    image: postgres
+    container_name: bot-postgres
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - "./data/postgres:/var/lib/postgresql/data"
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: bot-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - "./data/pgadmin:/var/lib/pgadmin"
   prometheus:
     image: prom/prometheus:latest
-    container_name: oa-prometheus
+    container_name: bot-prometheus
     volumes:
       - "./data/prometheus:/prometheus"
       - "./build/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
@@ -22,7 +39,7 @@ services:
       - bot
   grafana:
     image: grafana/grafana:latest
-    container_name: oa-grafana
+    container_name: bot-grafana
     volumes:
       - "./data/grafana:/var/lib/grafana"
     networks:
