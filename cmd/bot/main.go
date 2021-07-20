@@ -4,6 +4,7 @@ import (
 	api2 "bot/internal/api"
 	"bot/internal/config"
 	"bot/internal/db/postgres"
+	"bot/internal/logger"
 	mRep "bot/internal/repository/message"
 	uRep "bot/internal/repository/user"
 	mSer "bot/internal/service/message"
@@ -15,9 +16,9 @@ import (
 )
 
 func main() {
-	fmt.Println("started")
-
 	cfg := config.GetConfig()
+	log := logger.NewLogger(cfg.Log.Facility)
+	log.Info("bot started")
 	apiServer := api2.NewServer()
 	db, err := postgres.GetDb(cfg)
 	if err != nil {
@@ -42,5 +43,5 @@ func main() {
 	}()
 	wg.Wait()
 
-	fmt.Println("shutdown")
+	fmt.Println("bot shutdown")
 }

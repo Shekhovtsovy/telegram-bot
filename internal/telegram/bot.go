@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"bot/internal/config"
+	"bot/internal/logger"
 	"bot/internal/system/metrics"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -25,6 +26,7 @@ type bot struct {
 	stat           metrics.TelegramStat
 	messageService messageService
 	userService    userService
+	log            logger.Log
 }
 
 // Listen messages
@@ -36,6 +38,7 @@ func (b *bot) Listen() {
 		if update.Message == nil { // ignore any non-Message Updates
 			continue
 		}
+		b.log.Info("got message from telegram")
 		b.stat.IncReceivedMessages()
 		if err := b.messageService.SaveMessage(update.Message); err != nil {
 		}
@@ -48,11 +51,13 @@ func (b *bot) Listen() {
 func NewBot(cfg config.Config, ms messageService, us userService) Bot {
 	b, _ := tgbotapi.NewBotAPI(cfg.Telegram.ApiToken)
 	b.Debug = cfg.IsLog
+	l := logger.NewLogger("telegram")
 	return &bot{
 		api:            b,
 		name:           cfg.Telegram.BotName,
 		stat:           metrics.NewTelegramStat(),
 		messageService: ms,
 		userService:    us,
+		log:            l,
 	}
 }

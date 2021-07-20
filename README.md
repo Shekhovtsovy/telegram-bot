@@ -30,3 +30,23 @@ $ make build
 ```
 $ make run
 ```
+
+## Logs
+
+###Level
+* facility
+  - message
+
+###Info
+* telegram
+    - bot started
+    - bot shutdown
+* messageService
+    - message saved
+* userService
+    - user saved
+###Error
+* messageService
+  - message save error
+* userService
+  - user save error

@@ -12,6 +12,7 @@ type Config struct {
 	IsLog bool   `envconfig:"APP_LOG" default:"false"`
 	Telegram
 	Db
+	Log
 }
 
 var (
