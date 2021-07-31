@@ -39,17 +39,20 @@ func (b *bot) Listen() {
 		if update.Message == nil { // ignore any non-Message Updates
 			continue
 		}
-		b.log.Info("got message from telegram")
 		b.stat.IncReceivedMessages()
+		b.log.Info("got message from telegram",
+			zap.String("text", update.Message.Text),
+			zap.Int("message_id", update.Message.From.ID),
+			zap.Int("user_id", update.Message.From.ID))
 		user, userErr := b.userService.SaveUserIfNew(update.Message.From)
 		if userErr == nil {
-			b.log.Info("user saved", zap.Int("id", user.ID))
+			b.log.Info("user saved", zap.Int("user_id", user.ID))
 		} else {
 			b.log.Error("user save error")
 		}
 		msg, msgErr := b.messageService.SaveMessage(update.Message)
 		if msgErr == nil {
-			b.log.Info("message saved", zap.Int("id", msg.MessageID))
+			b.log.Info("message saved", zap.Int("message_id", msg.MessageID))
 		} else {
 			b.log.Error("message save error")
 		}
@@ -61,13 +64,26 @@ func (b *bot) Listen() {
 
 // Process message
 func (b *bot) processMessage(msg *tgbotapi.Message) error {
-	if msg.Text == commandAboutRequest {
-		answer := tgbotapi.NewMessage(msg.Chat.ID, commandAboutResponse)
+	switch msg.Text {
+	case commandStartRequest:
+		if err := b.handleCommandStart(msg); err != nil {
+			return err
+		}
+	case commandStopRequest:
+		if err := b.handleCommandStop(msg); err != nil {
+			return err
+		}
+	case commandAboutRequest:
+		if err := b.handleCommandAbout(msg); err != nil {
+			return err
+		}
+	default:
+		answer := tgbotapi.NewMessage(msg.Chat.ID, "❌ command not found")
 		_, err := b.api.Send(answer)
 		if err != nil {
 			return err
 		}
-		b.log.Info("send message from bot", zap.String("command", commandAboutRequest))
+		b.log.Info("send message from bot")
 	}
 	return nil
 }
@@ -76,7 +92,7 @@ func (b *bot) processMessage(msg *tgbotapi.Message) error {
 func NewBot(cfg config.Config, ms messageService, us userService) Bot {
 	b, _ := tgbotapi.NewBotAPI(cfg.Telegram.ApiToken)
 	b.Debug = cfg.Telegram.IsLog
-	l := logger.NewLogger("telegram")
+	l := logger.NewLogger("bot")
 	return &bot{
 		api:            b,
 		name:           cfg.Telegram.BotName,

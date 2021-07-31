@@ -10,7 +10,7 @@ type Service interface {
 }
 
 type repository interface {
-	InsertMessage(message *tgbotapi.Message) error
+	InsertMessage(msg *tgbotapi.Message) error
 }
 
 type service struct {
