@@ -1,5 +1,8 @@
 # Telegram Bot
 
+Start kit for Telegram bot. Collecting all messages and users from  bot chat. Logging system connected.
+
+
 ## Setup
 * Copy `docker-compose.override.yml.dist` to `docker-compose.override.yml`
 ```
