@@ -43,12 +43,12 @@ $ make run
     - bot shutdown
 * telegram
   - got message from telegram
-* messageService
+* message
     - message saved
-* userService
+* user
     - user saved
 ### Error
-* messageService
+* message
   - message save error
-* userService
+* user
   - user save error

@@ -35,7 +35,7 @@ func (s *service) SaveUserIfNew(user *tgbotapi.User) error {
 
 // NewService return a new message service
 func NewService(r repository) Service {
-	l := logger.NewLogger("userService")
+	l := logger.NewLogger("user")
 	return &service{
 		repository: r,
 		log:        l,

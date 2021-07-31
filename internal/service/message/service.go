@@ -32,7 +32,7 @@ func (s *service) SaveMessage(msg *tgbotapi.Message) error {
 
 // NewService return a new message service
 func NewService(r repository) Service {
-	l := logger.NewLogger("messageService")
+	l := logger.NewLogger("message")
 	return &service{
 		repository: r,
 		log:        l,
