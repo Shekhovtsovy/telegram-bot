@@ -46,12 +46,12 @@ $ make run
     - bot shutdown
 * telegram
   - got message from telegram
-* message
-    - message saved
-* user
-    - user saved
+  - send message from bot
+  - message saved
+  - user saved
+    
 ### Error
-* message
+* telegram
+  - processing message error
   - message save error
-* user
   - user save error
