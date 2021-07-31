@@ -8,10 +8,29 @@ services:
       - "5432:5432"
   pgadmin:
     ports:
-       - "8000:80"
+      - "8000:80"
   prometheus:
     ports:
       - "9090:9090"
   grafana:
     ports:
       - "3000:3000"
+  graylog:
+    ports:
+      # Graylog web interface and REST API
+      - 9000:9000
+      # Syslog TCP
+      - 1514:1514
+      # Syslog UDP
+      - 1514:1514/udp
+      # GELF TCP
+      - 12201:12201
+      # GELF UDP
+      - 12201:12201/udp
+  graylog-mongo:
+    ports:
+      - "27017:27017"
+  graylog-elasticsearch:
+    ports:
+      - "9200:9200"
+      - "9300:9300"

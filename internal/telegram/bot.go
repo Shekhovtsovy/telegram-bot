@@ -50,7 +50,7 @@ func (b *bot) Listen() {
 // NewBot return a new Telegram Bot
 func NewBot(cfg config.Config, ms messageService, us userService) Bot {
 	b, _ := tgbotapi.NewBotAPI(cfg.Telegram.ApiToken)
-	b.Debug = cfg.IsLog
+	b.Debug = cfg.Telegram.IsLog
 	l := logger.NewLogger("telegram")
 	return &bot{
 		api:            b,

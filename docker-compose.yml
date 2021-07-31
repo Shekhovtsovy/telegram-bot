@@ -44,7 +44,44 @@ services:
       - "./data/grafana:/var/lib/grafana"
     networks:
       - bot
-
+  graylog:
+    image: graylog/graylog:4.1
+    container_name: bot-graylog
+    environment:
+      - GRAYLOG_ROOT_USERNAME=${GRAYLOG_USERNAME}
+      - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD}
+      - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2}
+      - GRAYLOG_HTTP_EXTERNAL_URI=${GRAYLOG_UI_URI}
+      - GRAYLOG_MONGODB_URI=${GRAYLOG_MONGODB_URI}
+      - GRAYLOG_ELASTICSEARCH_HOSTS=${GRAYLOG_ELASTICSEARCH_HOSTS}
+    volumes:
+      - "./data/graylog/data/journal:/usr/share/graylog/data/journal"
+    depends_on:
+      - graylog-mongo
+      - graylog-elasticsearch
+    restart: always
+    networks:
+      - bot
+  graylog-mongo:
+    image: mongo:4.2
+    container_name: bot-graylog-mongo
+    volumes:
+      - "./data/graylog/data/mongo:/data/db"
+    networks:
+      - bot
+  graylog-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
+    container_name: bot-graylog-elasticsearch
+    volumes:
+      - "./data/graylog/data/elasticsearch:/usr/share/elasticsearch/data"
+      - "./data/graylog/data/elasticsearch/nodes:/usr/share/elasticsearch/data/nodes"
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - bot
 networks:
   bot:
     external: true

@@ -33,19 +33,21 @@ $ make run
 
 ## Logs
 
-###Level
+### Level
 * facility
   - message
 
-###Info
-* telegram
+### Info
+* default
     - bot started
     - bot shutdown
+* telegram
+  - got message from telegram
 * messageService
     - message saved
 * userService
     - user saved
-###Error
+### Error
 * messageService
   - message save error
 * userService

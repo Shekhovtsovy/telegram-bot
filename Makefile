@@ -1,6 +1,6 @@
 .PHONY: build run help
 
-BIN_NAME ?= oa
+BIN_NAME ?= bot
 BIN_FULL_PATH ?= "../bin/${BIN_NAME}"
 SOURCE_FULL_PATH ?= "./cmd/${BIN_NAME}"
 
