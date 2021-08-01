@@ -23,7 +23,7 @@ type userService interface {
 
 type bot struct {
 	api            *tgbotapi.BotAPI
-	name           string
+	cfg            config.Telegram
 	stat           metrics.TelegramStat
 	messageService messageService
 	userService    userService
@@ -42,17 +42,17 @@ func (b *bot) Listen() {
 		b.stat.IncReceivedMessages()
 		b.log.Info("got message from telegram",
 			zap.String("text", update.Message.Text),
-			zap.Int("message_id", update.Message.From.ID),
-			zap.Int("user_id", update.Message.From.ID))
+			zap.Int("messageId", update.Message.From.ID),
+			zap.Int("userId", update.Message.From.ID))
 		user, userErr := b.userService.SaveUserIfNew(update.Message.From)
 		if userErr == nil {
-			b.log.Info("user saved", zap.Int("user_id", user.ID))
+			b.log.Info("user saved", zap.Int("userId", user.ID))
 		} else {
 			b.log.Error("user save error", zap.String("details", userErr.Error()))
 		}
 		msg, msgErr := b.messageService.SaveMessage(update.Message)
 		if msgErr == nil {
-			b.log.Info("message saved", zap.Int("message_id", msg.MessageID))
+			b.log.Info("message saved", zap.Int("messageId", msg.MessageID))
 		} else {
 			b.log.Error("message save error", zap.String("details", msgErr.Error()))
 		}
@@ -95,7 +95,7 @@ func NewBot(cfg config.Config, ms messageService, us userService) Bot {
 	l := logger.NewLogger("bot")
 	return &bot{
 		api:            b,
-		name:           cfg.Telegram.BotName,
+		cfg:            cfg.Telegram,
 		stat:           metrics.NewTelegramStat(),
 		messageService: ms,
 		userService:    us,

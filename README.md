@@ -1,7 +1,7 @@
 # Telegram Bot
 
 Start kit for Telegram bot. Collecting all messages and users from  bot chat. Logging system connected. Few commands
-implemented as examples.
+implemented as examples. + optional ***"need to subscribe on"*** feature before `/start` command
 
 
 ## Setup
@@ -40,7 +40,6 @@ $ make run
 ### Level
 * facility
   - message
-
 ### Info
 * default
     - bot started
@@ -50,7 +49,7 @@ $ make run
   - send message from bot
   - message saved
   - user saved
-    
+  - need to subscribe
 ### Error
 * default
   - can`t connect to database
