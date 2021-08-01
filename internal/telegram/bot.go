@@ -48,16 +48,16 @@ func (b *bot) Listen() {
 		if userErr == nil {
 			b.log.Info("user saved", zap.Int("user_id", user.ID))
 		} else {
-			b.log.Error("user save error")
+			b.log.Error("user save error", zap.String("details", userErr.Error()))
 		}
 		msg, msgErr := b.messageService.SaveMessage(update.Message)
 		if msgErr == nil {
 			b.log.Info("message saved", zap.Int("message_id", msg.MessageID))
 		} else {
-			b.log.Error("message save error")
+			b.log.Error("message save error", zap.String("details", msgErr.Error()))
 		}
 		if err := b.processMessage(update.Message); err != nil {
-			b.log.Error("processing message error")
+			b.log.Error("processing message error", zap.String("details", err.Error()))
 		}
 	}
 }
