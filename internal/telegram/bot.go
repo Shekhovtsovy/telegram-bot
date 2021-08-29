@@ -182,6 +182,6 @@ func NewBot(cfg config.Config, mr msgRep, ur userRep) Bot {
 		userRep: ur,
 		msgRep:  mr,
 		log:     logger.NewLogger("bot"),
-		botId:   0,
+		botId:   cfg.Telegram.BotId,
 	}
 }
