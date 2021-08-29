@@ -23,11 +23,17 @@ func (b *bot) handleCommandStart(msg *tgbotapi.Message) error {
 			answer := tgbotapi.NewMessage(msg.Chat.ID, "To continue you must subscribe: "+channelAddress)
 			buttons := tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonURL(b.cfg.NeedToSubscribeOn, channelAddress))
 			answer.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(buttons)
-			_, err := b.api.Send(answer)
+			_, err := b.sendMessage(answer)
 			if err != nil {
 				return err
 			}
 		}
+	}
+	startText := "Welcome!"
+	answer := tgbotapi.NewMessage(msg.Chat.ID, startText)
+	_, err := b.sendMessage(answer)
+	if err != nil {
+		return err
 	}
 	b.log.Info("send message from bot", zap.String("command", commandStart))
 	return nil
@@ -42,7 +48,7 @@ func (b *bot) handleCommandAbout(msg *tgbotapi.Message) error {
 		tgbotapi.NewInlineKeyboardButtonData("🚀 Start", "|"+callbackStart),
 	)
 	answer.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(butRow)
-	_, err := b.api.Send(answer)
+	_, err := b.sendMessage(answer)
 	if err != nil {
 		return err
 	}
@@ -53,10 +59,6 @@ func (b *bot) handleCommandAbout(msg *tgbotapi.Message) error {
 // handleUnknownCommand handles unknown command
 func (b *bot) handleUnknownCommand(msg *tgbotapi.Message) error {
 	answer := tgbotapi.NewMessage(msg.Chat.ID, "Unknown command 🤷‍♀")
-	_, err := b.api.Send(answer)
-	if err != nil {
-		return err
-	}
 	butRow := tgbotapi.NewInlineKeyboardRow(
 		tgbotapi.NewInlineKeyboardButtonData("🚀 Start", "|"+callbackStart),
 	)
@@ -64,6 +66,10 @@ func (b *bot) handleUnknownCommand(msg *tgbotapi.Message) error {
 		tgbotapi.NewInlineKeyboardButtonData("❓ About", "|"+callbackAbout),
 	)
 	answer.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(butRow, butRow2)
+	_, err := b.sendMessage(answer)
+	if err != nil {
+		return err
+	}
 	b.log.Info("send message from bot", zap.String("command", "unknown"))
 	return nil
 }

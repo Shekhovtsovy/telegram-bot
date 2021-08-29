@@ -33,6 +33,7 @@ type bot struct {
 	userRep userRep
 	msgRep  msgRep
 	log     logger.Log
+	botId   int
 }
 
 // Listen income data
@@ -69,9 +70,6 @@ func (b *bot) Listen() {
 // saveNewUser saves user if he does not exist in database
 func (b *bot) saveNewUser(user *tgbotapi.User) {
 	if _, err := b.userRep.GetOne(user.ID); err != nil {
-		b.stat.IncSavingUserErrors()
-		b.log.Error("saving user error", zap.String("details", err.Error()))
-	} else {
 		if err := b.userRep.AddOne(user); err != nil {
 			b.stat.IncSavingUserErrors()
 			b.log.Error("saving user error", zap.String("details", err.Error()))
@@ -94,6 +92,17 @@ func (b *bot) saveIncomeMessage(msg *tgbotapi.Message) {
 
 // processMessage processes an income message
 func (b *bot) processMessage(msg *tgbotapi.Message) error {
+	oldBotMsgs, err := b.msgRep.GetAll(b.botId, int(msg.Chat.ID))
+	if err != nil {
+		return err
+	}
+	if oldBotMsgs != nil {
+		for _, oldBotMsg := range oldBotMsgs {
+			if err := b.deleteMessage(int(oldBotMsg.Id), int64(oldBotMsg.ChatId)); err != nil {
+				continue
+			}
+		}
+	}
 	switch msg.Text {
 	case commandStart:
 		if err := b.handleCommandStart(msg); err != nil {
@@ -107,6 +116,9 @@ func (b *bot) processMessage(msg *tgbotapi.Message) error {
 		if err := b.handleUnknownCommand(msg); err != nil {
 			return err
 		}
+	}
+	if err := b.deleteMessage(msg.MessageID, msg.Chat.ID); err != nil {
+		return err
 	}
 	return nil
 }
@@ -128,6 +140,34 @@ func (b *bot) processCallback(c *tgbotapi.CallbackQuery) error {
 			return err
 		}
 	}
+	if err := b.deleteMessage(c.Message.MessageID, c.Message.Chat.ID); err != nil {
+		return err
+	}
+	return nil
+}
+
+// sendMessage sends message to chat and saves this message to database
+func (b *bot) sendMessage(c tgbotapi.Chattable) (tgbotapi.Message, error) {
+	msg, err := b.api.Send(c)
+	if err != nil {
+		return msg, err
+	}
+	_, err = b.msgRep.AddOne(&msg)
+	return msg, err
+}
+
+// deleteMessage deletes message by message ID and chat ID from chat and database
+func (b *bot) deleteMessage(messageId int, chatId int64) error {
+	deleteConfig := tgbotapi.DeleteMessageConfig{
+		ChatID:    chatId,
+		MessageID: messageId,
+	}
+	if _, err := b.api.DeleteMessage(deleteConfig); err != nil {
+		return err
+	}
+	if err := b.msgRep.DeleteOne(messageId, int(chatId)); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -142,5 +182,6 @@ func NewBot(cfg config.Config, mr msgRep, ur userRep) Bot {
 		userRep: ur,
 		msgRep:  mr,
 		log:     logger.NewLogger("bot"),
+		botId:   0,
 	}
 }
