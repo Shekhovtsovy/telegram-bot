@@ -13,7 +13,7 @@ const userTableName = "users"
 // User is an interface which provides methods for user repository work
 type User interface {
 	GetOne(userId int) (model.User, error)
-	AddOne(user *tgbotapi.User) error
+	SaveOne(user *tgbotapi.User) error
 }
 
 type user struct {
@@ -28,8 +28,8 @@ func (r *user) GetOne(userId int) (model.User, error) {
 	return user, err
 }
 
-// AddOne inserts a message to database
-func (r *user) AddOne(user *tgbotapi.User) error {
+// SaveOne inserts a message to database
+func (r *user) SaveOne(user *tgbotapi.User) error {
 	query := fmt.Sprintf(`INSERT INTO "%s"("id", "first_name", "last_name", "user_name", "language_code", "is_bot", "created_at") values($1, $2, $3, $4, $5, $6, $7)`, userTableName)
 	if _, err := r.db.Exec(query, user.ID, user.FirstName, user.LastName, user.UserName, user.LanguageCode, user.IsBot, time.Now()); err != nil {
 		return err

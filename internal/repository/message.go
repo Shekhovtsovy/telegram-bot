@@ -12,7 +12,7 @@ const messageTableName = "messages"
 
 // Message is an interface which provides methods for message repository work
 type Message interface {
-	AddOne(msg *tgbotapi.Message) (*tgbotapi.Message, error)
+	SaveOne(msg *tgbotapi.Message) (*tgbotapi.Message, error)
 	GetAll(userId int, chatId int) ([]model.Message, error)
 	DeleteOne(msgId int, chatId int) error
 }
@@ -21,8 +21,8 @@ type message struct {
 	db *sql.DB
 }
 
-// AddOne inserts a message to database
-func (r *message) AddOne(msg *tgbotapi.Message) (*tgbotapi.Message, error) {
+// SaveOne inserts a message to database
+func (r *message) SaveOne(msg *tgbotapi.Message) (*tgbotapi.Message, error) {
 	createdAt := time.Unix(int64(msg.Date), 0).Format("2006-01-02 15:04:05")
 	query := fmt.Sprintf(`INSERT INTO "%s"("id", "created_at", "user_id", "chat_id", "text") values($1, $2, $3, $4, $5)`, messageTableName)
 	if _, err := r.db.Exec(query, msg.MessageID, createdAt, msg.From.ID, msg.Chat.ID, msg.Text); err != nil {

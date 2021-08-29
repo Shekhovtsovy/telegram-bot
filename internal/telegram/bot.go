@@ -17,11 +17,11 @@ type Bot interface {
 
 type userRep interface {
 	GetOne(userId int) (model.User, error)
-	AddOne(user *tgbotapi.User) error
+	SaveOne(user *tgbotapi.User) error
 }
 
 type msgRep interface {
-	AddOne(msg *tgbotapi.Message) (*tgbotapi.Message, error)
+	SaveOne(msg *tgbotapi.Message) (*tgbotapi.Message, error)
 	GetAll(userId int, chatId int) ([]model.Message, error)
 	DeleteOne(msgId int, chatId int) error
 }
@@ -70,7 +70,7 @@ func (b *bot) Listen() {
 // saveNewUser saves user if he does not exist in database
 func (b *bot) saveNewUser(user *tgbotapi.User) {
 	if _, err := b.userRep.GetOne(user.ID); err != nil {
-		if err := b.userRep.AddOne(user); err != nil {
+		if err := b.userRep.SaveOne(user); err != nil {
 			b.stat.IncSavingUserErrors()
 			b.log.Error("saving user error", zap.String("details", err.Error()))
 		} else {
@@ -82,7 +82,7 @@ func (b *bot) saveNewUser(user *tgbotapi.User) {
 
 // saveIncomeMessage saves income message
 func (b *bot) saveIncomeMessage(msg *tgbotapi.Message) {
-	if msg, err := b.msgRep.AddOne(msg); err != nil {
+	if msg, err := b.msgRep.SaveOne(msg); err != nil {
 		b.stat.IncSavingMessageErrors()
 		b.log.Error("saving message error", zap.String("details", err.Error()))
 	} else {
@@ -152,7 +152,7 @@ func (b *bot) sendMessage(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 	if err != nil {
 		return msg, err
 	}
-	_, err = b.msgRep.AddOne(&msg)
+	_, err = b.msgRep.SaveOne(&msg)
 	return msg, err
 }
 
