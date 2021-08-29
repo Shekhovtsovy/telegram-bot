@@ -42,8 +42,8 @@ $ make run
   - message
 ### Info
 * default
-    - bot started
-    - bot shutdown
+  - bot started
+  - bot shutdown
 * bot
   - got message from telegram
   - send message from bot
@@ -55,6 +55,8 @@ $ make run
   - can`t connect to database
   - can`t start web server
 * bot
+  - telegram listening error
   - processing message error
-  - message save error
-  - user save error
+  - processing callback error  
+  - saving message error
+  - saving user error

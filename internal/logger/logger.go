@@ -31,7 +31,7 @@ func (l *log) Error(msg string, fields ...zap.Field) {
 	l.logger.Error(msg, fields...)
 }
 
-// NewLogger return a new logger
+// NewLogger returns new logger
 func NewLogger(facility string) Log {
 	// encode
 	encoderConfig := zap.NewProductionEncoderConfig()

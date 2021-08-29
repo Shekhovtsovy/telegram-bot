@@ -30,6 +30,7 @@ func initAndGetConfig() (*Config, error) {
 	return config, nil
 }
 
+// GetConfig returns main app config
 func GetConfig() Config {
 	var err error
 	mu.RLock()

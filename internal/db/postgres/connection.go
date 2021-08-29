@@ -9,7 +9,7 @@ import (
 
 var db *sql.DB
 
-// GetDb returns database connection
+// GetDb returns a database connection
 func GetDb(cfg config.Config) (*sql.DB, error) {
 	if db != nil {
 		return db, nil

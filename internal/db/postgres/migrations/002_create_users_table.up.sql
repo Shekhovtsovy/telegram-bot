@@ -1,4 +1,4 @@
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
     "id" bigint PRIMARY KEY,
     "first_name" varchar,
     "last_name" varchar NULL,

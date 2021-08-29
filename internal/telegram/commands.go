@@ -6,10 +6,8 @@ import (
 	"go.uber.org/zap"
 )
 
-const commandStartRequest = "/start"
-const commandStopRequest = "/stop"
-const commandAboutRequest = "/about"
-const commandAboutResponse = "📌 About bot \n\n Here your text..."
+const commandStart = "/start"
+const commandAbout = "/about"
 
 // Handle command Start
 func (b *bot) handleCommandStart(msg *tgbotapi.Message) error {
@@ -31,23 +29,41 @@ func (b *bot) handleCommandStart(msg *tgbotapi.Message) error {
 			}
 		}
 	}
-	b.log.Info("send message from bot", zap.String("command", commandStartRequest))
+	b.log.Info("send message from bot", zap.String("command", commandStart))
 	return nil
 }
 
-// Handle command Stop
-func (b *bot) handleCommandStop(msg *tgbotapi.Message) error {
-	b.log.Info("send message from bot", zap.String("command", commandStopRequest))
-	return nil
-}
-
-// Handle command About
+// handleCommandAbout handles about command
 func (b *bot) handleCommandAbout(msg *tgbotapi.Message) error {
-	answer := tgbotapi.NewMessage(msg.Chat.ID, commandAboutResponse)
+	aboutText := "*About*:\n\n Here your text..."
+	answer := tgbotapi.NewMessage(msg.Chat.ID, aboutText)
+	answer.ParseMode = "markdown"
+	butRow := tgbotapi.NewInlineKeyboardRow(
+		tgbotapi.NewInlineKeyboardButtonData("🚀 Start", "|"+callbackStart),
+	)
+	answer.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(butRow)
 	_, err := b.api.Send(answer)
 	if err != nil {
 		return err
 	}
-	b.log.Info("send message from bot", zap.String("command", commandAboutRequest))
+	b.log.Info("send message from bot", zap.String("command", commandAbout))
+	return nil
+}
+
+// handleUnknownCommand handles unknown command
+func (b *bot) handleUnknownCommand(msg *tgbotapi.Message) error {
+	answer := tgbotapi.NewMessage(msg.Chat.ID, "Unknown command 🤷‍♀")
+	_, err := b.api.Send(answer)
+	if err != nil {
+		return err
+	}
+	butRow := tgbotapi.NewInlineKeyboardRow(
+		tgbotapi.NewInlineKeyboardButtonData("🚀 Start", "|"+callbackStart),
+	)
+	butRow2 := tgbotapi.NewInlineKeyboardRow(
+		tgbotapi.NewInlineKeyboardButtonData("❓ About", "|"+callbackAbout),
+	)
+	answer.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(butRow, butRow2)
+	b.log.Info("send message from bot", zap.String("command", "unknown"))
 	return nil
 }

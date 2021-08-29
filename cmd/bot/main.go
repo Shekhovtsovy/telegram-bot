@@ -5,10 +5,7 @@ import (
 	"bot/internal/config"
 	"bot/internal/db/postgres"
 	"bot/internal/logger"
-	mRep "bot/internal/repository/message"
-	uRep "bot/internal/repository/user"
-	mSer "bot/internal/service/message"
-	uSer "bot/internal/service/user"
+	"bot/internal/repository"
 	"bot/internal/telegram"
 	"fmt"
 	"go.uber.org/zap"
@@ -26,12 +23,11 @@ func main() {
 		log.Error("can`t connect to database", zap.String("details", err.Error()))
 		panic("can`t connect to database")
 	}
-	messageRepository := mRep.NewRepository(db)
-	messageService := mSer.NewService(messageRepository)
-	userRepository := uRep.NewRepository(db)
-	userService := uSer.NewService(userRepository)
-	bot := telegram.NewBot(cfg, messageService, userService)
-
+	// telegram bot init
+	userRep := repository.NewUser(db)
+	msgRep := repository.NewMessage(db)
+	bot := telegram.NewBot(cfg, msgRep, userRep)
+	// run
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go func() {
