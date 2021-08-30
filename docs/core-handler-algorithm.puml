@@ -1,0 +1,28 @@
+@startuml
+start
+if (has callback query?) then (yes)
+partition processCallback {
+if (callback data = some callback id?) then (yes)
+:handle certain callback or command handler;
+else (no)
+:handle unknown command handler;
+endif
+:delete callback source message;
+}
+endif
+if (has message?) then (yes)
+:save new user;
+:save income message;
+partition processMessage {
+:delete old bot messages;
+if (message text = some command id?) then (yes)
+:handle certain command handler;
+else (no)
+:handle unknown command handler;
+endif
+:delete income message;
+}
+else (no (if had callback query))
+endif
+end
+@enduml
